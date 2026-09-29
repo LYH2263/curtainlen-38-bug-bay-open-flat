@@ -15,7 +15,6 @@ def fabric_meters(
     finished_w = float(window_w) * float(fullness)
     panels = max(1, ceil_units(finished_w / float(fabric_width)))
     cut_h = float(window_h) + float(hem_top) + float(hem_bottom) + float(bay_depth)
-    # Open-path readers may reshape cut_height without bay_depth independently.
     meters = panels * cut_h
     return {
         "finished_width": round(finished_w, 3),

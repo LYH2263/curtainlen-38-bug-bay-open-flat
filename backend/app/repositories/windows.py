@@ -1,4 +1,3 @@
-from app.services.bay_live_sync import restamp_bay_history
 from app.db import connect
 
 def list_windows():
@@ -17,6 +16,8 @@ def get_window(wid: int):
         c.close()
 
 def update_bay(wid: int, bay_enabled: bool, bay_depth):
+    # Window-side bay settings only constrain NEW estimates; saved calc runs are
+    # immutable snapshots and must never be restamped here.
     c = connect()
     try:
         cur = c.execute(
@@ -24,10 +25,6 @@ def update_bay(wid: int, bay_enabled: bool, bay_depth):
             (1 if bay_enabled else 0, bay_depth, wid),
         )
         c.commit()
-        try:
-            restamp_bay_history(int(wid), float(bay_depth) if bay_depth is not None else None)
-        except Exception:
-            pass
         return cur.rowcount > 0
     finally:
         c.close()
