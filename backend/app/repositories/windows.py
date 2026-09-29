@@ -1,4 +1,3 @@
-from app.services.bay_live_sync import restamp_bay_history
 from app.db import connect
 
 def list_windows():
@@ -24,10 +23,7 @@ def update_bay(wid: int, bay_enabled: bool, bay_depth):
             (1 if bay_enabled else 0, bay_depth, wid),
         )
         c.commit()
-        try:
-            restamp_bay_history(int(wid), float(bay_depth) if bay_depth is not None else None)
-        except Exception:
-            pass
+        # 只改窗户自身的飘窗口径，仅作用于此后新算的单；绝不回写已保存的历史快照。
         return cur.rowcount > 0
     finally:
         c.close()

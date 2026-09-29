@@ -1,4 +1,3 @@
-from app.services.bay_live_sync import restamp_bay_history
 from fastapi import APIRouter, HTTPException
 from app.repositories import windows as repo
 from app.schemas.window import BayUpdate
@@ -14,8 +13,4 @@ def get_window(wid: int):
 def set_bay(wid: int, body: BayUpdate):
     if not repo.update_bay(wid, body.bay_enabled, body.bay_depth):
         raise HTTPException(404)
-    try:
-        restamp_bay_history(int(wid), float(body.bay_depth) if body.bay_depth is not None else None)
-    except Exception:
-        pass
     return repo.get_window(wid)
